@@ -35,17 +35,29 @@ except ImportError:
     st.stop()
 
 # Utility function for API keys
-def get_api_key(key_name):
-    """Get API key from Streamlit secrets or environment variables"""
-    try:
-        # Try Streamlit secrets first (for cloud deployment)
-        if hasattr(st, 'secrets') and key_name in st.secrets:
+def get_api_key(key_name="OPENAI_API_KEY"):
+    """
+    Get API key safely:
+    1. Streamlit secrets
+    2. Environment variable
+    """
+    # 1️⃣ Streamlit secrets
+    if hasattr(st, 'secrets'):
+        if key_name in st.secrets:
             return st.secrets[key_name]
-    except:
-        pass
-    
-    # Fallback to environment variables (for local development)
-    return os.getenv(key_name)
+
+    # 2️⃣ Environment variable
+    key = os.getenv(key_name)
+    if key:
+        return key
+
+    # If no key found
+    st.warning(f"⚠️ {key_name} not found. Please provide your own key via secrets.toml or environment variable.")
+    return None
+
+
+  
+
 
 # Add custom CSS and styling
 def add_custom_css():
