@@ -35,29 +35,17 @@ except ImportError:
     st.stop()
 
 # Utility function for API keys
-def get_api_key(key_name="OPENAI_API_KEY"):
-    """
-    Get API key safely:
-    1. Streamlit secrets
-    2. Environment variable
-    """
-    # 1️⃣ Streamlit secrets
-    if hasattr(st, 'secrets'):
-        if key_name in st.secrets:
+def get_api_key(key_name):
+    """Get API key from Streamlit secrets or environment variables"""
+    try:
+        # Try Streamlit secrets first (for cloud deployment)
+        if hasattr(st, 'secrets') and key_name in st.secrets:
             return st.secrets[key_name]
-
-    # 2️⃣ Environment variable
-    key = os.getenv(key_name)
-    if key:
-        return key
-
-    # If no key found
-    st.warning(f"⚠️ {key_name} not found. Please provide your own key via secrets.toml or environment variable.")
-    return None
-
-
-  
-
+    except:
+        pass
+    
+    # Fallback to environment variables (for local development)
+    return os.getenv(key_name)
 
 # Add custom CSS and styling
 def add_custom_css():
@@ -87,19 +75,21 @@ def add_custom_css():
     
     /* Header styling */
     .main-header {
-    color: white; /* <-- changed from transparent to white */
-    text-align: center;
-    font-weight: 700;
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* optional: increase shadow for clarity */
-}
-
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-align: center;
+        font-weight: 700;
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
     
     .subtitle {
         text-align: center;
         font-size: 1.2rem;
-        color: #f0f0f0; /* lighter text for contrast */
+        color: #6c757d;
         margin-bottom: 3rem;
         font-weight: 400;
     }
@@ -370,15 +360,20 @@ def render_sidebar():
 def render_main_interface():
     """Render the main application interface"""
     
-    # Header
+    #Header
     st.markdown("""
-    <div class="slide-in">
-        <h1 class="main-header">🎯 AI Resume Reviewer</h1>
-        <p class="subtitle">
+    <div class="slide-in" style="margin-bottom: 2rem; text-align: center;">
+        <h1 style="color: black; font-size: 3.5rem; font-weight: 700;">🎯 AI Resume Reviewer</h1>
+        <p style="color: white; font-size: 1.2rem; margin-bottom: 1rem;">
             Get instant, AI-powered feedback to optimize your resume for your target role
         </p>
+        <div style="height: 3px; background-color: white; width: 60%; margin: 1rem auto 2rem auto; border-radius: 2px;"></div>
     </div>
     """, unsafe_allow_html=True)
+
+
+
+
     
     # Get configuration from sidebar
     config = render_sidebar()
