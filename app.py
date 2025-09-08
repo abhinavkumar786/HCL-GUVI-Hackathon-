@@ -261,6 +261,8 @@ def initialize_session_state():
 def render_sidebar():
     """Render sidebar configuration"""
     with st.sidebar:
+        st.info("💡 Note: You must provide your own API key to use this app. The app does not include any API keys.")
+
         st.markdown("## ⚙️ Configuration")
         
         # API Provider Selection
